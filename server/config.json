@@ -1,0 +1,6 @@
+{
+  "development": {
+    "pointRate": 100
+  },
+  "production": {}
+}
