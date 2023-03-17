@@ -1,0 +1,15 @@
+.digit {
+  border: 0.2rem solid #cccccc;
+  text-align: left;
+  padding: 0.5rem;
+  min-height: 4.5rem;
+  background-color: black;
+}
+
+.screen {
+  min-width: 100%;
+  color: lightgray;
+  
+  font-size: 2rem;
+  padding: 10px;
+}
