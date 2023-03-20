@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home/index.js';
-import Client from './Pages/Client/index.js';
+import Customer from './Pages/Customer/index.js';
 import Employee from './Pages/Employee/index.js';
 import './App.css';
 function App() {
@@ -11,7 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/Employee" element={<Employee />} />
-          <Route path="/Client" element={<Client />} />
+          <Route path="/Customer" element={<Customer />} />
         </Routes>
       </HashRouter>
     </React.StrictMode>

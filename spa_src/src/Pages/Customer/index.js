@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PhonePad from '../../components/PhonePad';
 import PhoneNumber from '../../components/PhoneNumber'
-function Client() {
+function Customer() {
   const [phone, setPhone] = useState("");
   const handlePhoneChange = (input) =>{
     setPhone((prevData)=>{
@@ -25,4 +25,4 @@ function Client() {
   ;
 }
 
-export default Client;
+export default Customer;

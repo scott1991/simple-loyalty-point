@@ -4,7 +4,7 @@ function Home() {
     <div>
       <Link to='Employee'> Employee </Link>
       <div></div>
-      <Link to='Client'> Client </Link>
+      <Link to='Customer'> Customer </Link>
     </div>
   );
 }
