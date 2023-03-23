@@ -4,12 +4,14 @@ import logger from 'morgan';
 import indexRouter from './routes/index.js';
 import addRecord from './routes/addRecord.js';
 import { fileURLToPath } from 'url';
+import cors from 'cors';
 
 //const __filename = new URL('', import.meta.url).pathname;
 //const __dirname = new URL('.', import.meta.url).pathname;
 
 const app = express();
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

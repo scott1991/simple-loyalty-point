@@ -1,12 +1,17 @@
 import * as socketio from "socket.io";
+let IO ;
 function init(server){
 
-	let io = new socketio.Server(server);
-	var ROOM_MAP = {};
+	const io = new socketio.Server(server,{
+		cors: {
+			origin: "*",
+			methods: ["GET", "POST"]
+		}
+	});
+	IO = io ;
 
 	io.on('connection', function(socket){
 		console.log('@@@@@@ CONNECTED. @@@@@@')
-
 		socket.on('disconnect', function(){
 			console.log('@@@@@@ SOCKET DISCONNECT! @@@@@@', socket.id);
 		});
@@ -19,13 +24,23 @@ function init(server){
 			unsubscribe(socket, data, fn);
 		});
 
-		socket.on('client.list', function(data, fn){
-			const rooms = io.of("/").adapter.rooms;
-			// io.sockets.adapter.rooms.get("room1")
-			// io.sockets.clients('room1');
-			// io.of("/").in("room1").allSockets();
+		socket.on('join.customer', function(data, fn){
+			console.log('## join.customer: ', data, ' ##');
+			subscribe(socket, {roomName:"Customer"}, fn);
+		})
+		socket.on('join.employee', function(data, fn){
+			console.log('## join.employee: ', data, ' ##');
+			subscribe(socket, {roomName:"Employee"}, fn);
+		})
 
-			fn(ROOM_MAP);
+		socket.on('client.list', function(data, fn){
+			const ioinstance = io.of("/") ;
+			const roomsMap = ioinstance.adapter.rooms;
+			const roomsObj = Object.fromEntries(roomsMap) ;
+			for ( let room in roomsObj){
+				roomsObj[room] = [...roomsObj[room]] ;
+			}
+			fn(roomsObj);
 		});
 
 	})
@@ -55,4 +70,16 @@ function unsubscribe(socket, data, fn){
 	}
 }
 
-export default {init:init};
+function sendMsgToRoom(roomName, eventName, message){
+	console.log('sendMsgToRoom:', roomName, eventName, message);
+	const roomList = ['EXCHANGE_ROOM',roomName];
+	IO.to(roomList).emit(eventName, message);
+}
+
+function roomClientsCount(roomName){
+	const roomMap = IO.sockets.adapter.rooms ;
+	const roomSet = roomMap.get(roomName);
+	return roomSet.size;
+}
+
+export default {init:init,sendMsgToRoom:sendMsgToRoom};
