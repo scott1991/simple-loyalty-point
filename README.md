@@ -1,2 +1,2 @@
-# express-es6-spa-example
+# simple-loyalty-point
  
