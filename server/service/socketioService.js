@@ -43,6 +43,15 @@ function init(server){
 			fn(roomsObj);
 		});
 
+		socket.on('client.count', function(data, fn){
+			const roomsMap = io.sockets.adapter.rooms; // Map<string, Set<string>>
+			let roomsObj = {};
+			roomsMap.forEach((roomSet,key)=>{
+				roomsObj[key] = roomSet.size;
+			})
+			fn(roomsObj);
+		});
+
 	})
 
 	return {
