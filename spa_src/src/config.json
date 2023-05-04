@@ -1,0 +1,11 @@
+{
+    "development": {
+      "serverUrl":null,
+      "socketUrl":null
+    },
+    "production": {
+      "serverUrl":null,
+      "socketUrl":null
+    }
+  }
+  
