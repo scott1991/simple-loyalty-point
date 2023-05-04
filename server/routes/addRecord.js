@@ -1,10 +1,15 @@
 import express from 'express';
 let router = express.Router();
 import { SaleRecord } from '../models/saleRecord.js';
-const env = process.env.NODE_ENV || 'development';
-import config_json from "../config.json" assert { type: "json" }; // ! import json feature may be changed !
+
 import { UserPoint } from '../models/userPoint.js';
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const config_json = require("../config.json");
+const env = process.env.NODE_ENV || 'development';
 const CONFIG = config_json[env];
+
+
 /* GET home page. */
 router.post('/', async function (req, res, next) {
   const body = req.body ;

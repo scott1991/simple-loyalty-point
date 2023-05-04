@@ -1,52 +1,53 @@
 import * as socketio from "socket.io";
-let IO ;
-function init(server){
+let IO;
+function init(server) {
 
-	const io = new socketio.Server(server,{
+	const io = new socketio.Server(server, {
 		cors: {
 			origin: "*",
 			methods: ["GET", "POST"]
 		}
 	});
-	IO = io ;
+	IO = io;
 
-	io.on('connection', function(socket){
+	io.on('connection', function (socket) {
 		console.log('@@@@@@ CONNECTED. @@@@@@')
-		socket.on('disconnect', function(){
+		socket.on('disconnect', function () {
 			console.log('@@@@@@ SOCKET DISCONNECT! @@@@@@', socket.id);
+			socket.broadcast.emit('server.clientsUpdate', {});
 		});
-		socket.on('client.subscribe', function(data, fn){
+		socket.on('client.subscribe', function (data, fn) {
 			console.log('@@@@@@ SUBSCRIBE: ', data, ' @@@@@@');
 			subscribe(socket, data, fn);
 		})
-		socket.on('client.unsubscribe', function(data, fn){
+		socket.on('client.unsubscribe', function (data, fn) {
 			console.log('@@@@@@ UNSUBSCRIBE: ', data, ' @@@@@@');
 			unsubscribe(socket, data, fn);
 		});
 
-		socket.on('join.customer', function(data, fn){
+		socket.on('join.customer', function (data, fn) {
 			console.log('## join.customer: ', data, ' ##');
-			subscribe(socket, {roomName:"Customer"}, fn);
+			subscribe(socket, { roomName: "Customer" }, fn);
 		})
-		socket.on('join.employee', function(data, fn){
+		socket.on('join.employee', function (data, fn) {
 			console.log('## join.employee: ', data, ' ##');
-			subscribe(socket, {roomName:"Employee"}, fn);
+			subscribe(socket, { roomName: "Employee" }, fn);
 		})
 
-		socket.on('client.list', function(data, fn){
-			const ioinstance = io.of("/") ;
+		socket.on('client.list', function (data, fn) {
+			const ioinstance = io.of("/");
 			const roomsMap = ioinstance.adapter.rooms;
-			const roomsObj = Object.fromEntries(roomsMap) ;
-			for ( let room in roomsObj){
-				roomsObj[room] = [...roomsObj[room]] ;
+			const roomsObj = Object.fromEntries(roomsMap);
+			for (let room in roomsObj) {
+				roomsObj[room] = [...roomsObj[room]];
 			}
 			fn(roomsObj);
 		});
 
-		socket.on('client.count', function(data, fn){
+		socket.on('client.count', function (data, fn) {
 			const roomsMap = io.sockets.adapter.rooms; // Map<string, Set<string>>
 			let roomsObj = {};
-			roomsMap.forEach((roomSet,key)=>{
+			roomsMap.forEach((roomSet, key) => {
 				roomsObj[key] = roomSet.size;
 			})
 			fn(roomsObj);
@@ -59,36 +60,51 @@ function init(server){
 	};
 }
 
-function subscribe(socket, data, fn){
+function subscribe(socket, data, fn) {
 	var roomName = data.roomName;
-	if(roomName){
+	if (roomName) {
 		socket.join(roomName);
-		fn({result:true});
-	}else{
-		fn({result:false, message:'roomName not defined.'});
+		// send message to notice all room member except this room member
+		socket.broadcast.emit('server.clientsUpdate', {});
+		if (typeof (fn) == 'function') {
+			fn({ result: true });
+		}
+
+	} else {
+		if (typeof (fn) == 'function') {
+			fn({ result: false, message: 'roomName not defined.' });
+		}
+
 	}
 }
 
-function unsubscribe(socket, data, fn){
+function unsubscribe(socket, data, fn) {
 	var roomName = data.roomName;
-	if(roomName){
+	if (roomName) {
 		socket.leave(roomName);
-		fn({result:true});
-	}else{
-		fn({result:false, message:'roomName not defined.'});
+		socket.broadcast.emit('server.clientsUpdate', {});
+		if (typeof (fn) == 'function') {
+			fn({ result: true });
+		}
+
+	} else {
+		if (typeof (fn) == 'function') {
+			fn({ result: false, message: 'roomName not defined.' });
+		}
+
 	}
 }
 
-function sendMsgToRoom(roomName, eventName, message){
+function sendMsgToRoom(roomName, eventName, message) {
 	console.log('sendMsgToRoom:', roomName, eventName, message);
-	const roomList = ['EXCHANGE_ROOM',roomName];
+	const roomList = ['EXCHANGE_ROOM', roomName];
 	IO.to(roomList).emit(eventName, message);
 }
 
-function roomClientsCount(roomName){
-	const roomMap = IO.sockets.adapter.rooms ;
+function roomClientsCount(roomName) {
+	const roomMap = IO.sockets.adapter.rooms;
 	const roomSet = roomMap.get(roomName);
 	return roomSet.size;
 }
 
-export default {init:init,sendMsgToRoom:sendMsgToRoom};
+export default { init: init, sendMsgToRoom: sendMsgToRoom };
