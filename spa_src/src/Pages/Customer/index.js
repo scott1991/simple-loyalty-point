@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
+
 import PhoneNumber from '../../components/PhoneNumber';
 import PhonePad from '../../components/PhonePad';
 import useSocket from '../../useSocket';
 import Overlay from '../../components/Overlay';
 import Loading from '../../components/Loading';
+import CheckoutAmount from '../../components/CheckoutAmount';
+
 
 function Customer() {
   const [socket, isConnected] = useSocket();
   const [showOverlay, setShowOverlay] = useState(true);
   const [loadingText, setLoadingText] = useState("連線中...");
+  const [phone, setPhone] = useState("");
+  const [amount, setAmount] = useState("0");
 
   const joinRoom = () => {
     return new Promise((resolve, reject) => {
@@ -23,15 +28,6 @@ function Customer() {
     });
   };
 
-  const checkAndSetOverlay = async () => {
-    if (await checkRoomOk()) {
-      setShowOverlay(false);
-    } else {
-      setShowOverlay(true);
-      setLoadingText("等待 Employee 連線...");
-    }
-  };
-
   const checkRoomOk = () => {
     return new Promise((resolve) => {
       socket.emit('client.count', {}, (response) => {
@@ -41,12 +37,28 @@ function Customer() {
     });
   };
 
+  const checkAndSetOverlay = async () => {
+    if (await checkRoomOk()) {
+      setShowOverlay(false);
+    } else {
+      setShowOverlay(true);
+      setLoadingText("等待 Employee 連線...");
+    }
+  };
+
   useEffect(() => {
+    const handleAmountChange = (amount) => {
+      setAmount(amount);
+    }
+
     if (socket) {
       socket.on('server.clientsUpdate', checkAndSetOverlay);
+      socket.on('employee.confirmAmount', handleAmountChange);
 
       return () => {
+        // when unmount, remove event listener
         socket.off('server.clientsUpdate', checkAndSetOverlay);
+        socket.off('employee.confirmAmount', handleAmountChange);
       };
     }
   }, [socket]);
@@ -62,7 +74,6 @@ function Customer() {
     }
   }, [isConnected]);
 
-  const [phone, setPhone] = useState("");
   const handlePhoneChange = (input) => {
     setPhone((prevData) => {
       if (input === 'BS') {
@@ -76,14 +87,43 @@ function Customer() {
 
   };
 
+  const handleConfirmPhone = () => {
+    // POST /confirmPhone to notify server amount
+    fetch('/confirmPhone', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        phone: phone
+      },)
+    })
+      .then(res => res.text())
+      .then(data => {
+        console.log("confirmPhone", data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <Overlay show={showOverlay}>
         <Loading loadingText={loadingText} />
       </Overlay>
+      <CheckoutAmount amount={amount} />
       <PhoneNumber phoneNumber={phone} />
       <PhonePad handlePhoneChange={handlePhoneChange} />
+      <button
+        type="button"
+        onClick={handleConfirmPhone}
+        className="btn btn-success m-1"
+        disabled={amount=== "0"}>
+        確認號碼
+      </button>
     </div>
+
   );
 }
 

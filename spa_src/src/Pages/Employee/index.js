@@ -5,15 +5,18 @@ import CheckoutAmount from '../../components/CheckoutAmount';
 import useSocket from '../../useSocket';
 import Overlay from '../../components/Overlay';
 import Loading from '../../components/Loading';
+import PhoneNumber from '../../components/PhoneNumber';
 
 
 function Employee() {
   const [socket, isConnected] = useSocket();
   const [showOverlay, setShowOverlay] = useState(true);
   const [loadingText, setLoadingText] = useState("連線中...");
+  const [phone, setPhone] = useState("");
+  const [amount, setAmount] = useState("0");
 
   const joinRoom = () => {
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve, reject) => {
       socket.emit('join.employee', {}, (response) => {
         if (response.error) {
           reject(response.error);
@@ -22,7 +25,7 @@ function Employee() {
         }
       })
     });
-  }; 
+  };
 
   const checkRoomOk = () => {
     return new Promise((resolve) => {
@@ -36,20 +39,25 @@ function Employee() {
   const checkAndSetOverlay = async () => {
     if (await checkRoomOk()) {
       setShowOverlay(false);
-    }else{
+    } else {
       setShowOverlay(true);
       setLoadingText("等待Customer連線...");
     }
   };
 
   useEffect(() => {
-    if (socket) {
-      // Listen to 'server.clientsUpdate' event
-      socket.on('server.clientsUpdate', checkAndSetOverlay);
+    const handlePhoneChange = (phone) => {
+      setPhone(phone);
+    }
 
-      // Cleanup function to remove the event listener
+    if (socket) {
+      socket.on('server.clientsUpdate', checkAndSetOverlay);
+      socket.on('customer.confirmPhone', handlePhoneChange);
+
       return () => {
+        // when unmount, remove event listener
         socket.off('server.clientsUpdate', checkAndSetOverlay);
+        socket.off('customer.confirmPhone', handlePhoneChange);
       };
     }
   }, [socket]);
@@ -57,16 +65,14 @@ function Employee() {
   useEffect(() => {
     if (isConnected) {
       joinRoom()
-      .then(checkAndSetOverlay)
-      .catch(console.log);
+        .then(checkAndSetOverlay)
+        .catch(console.log);
     } else {
       setShowOverlay(true);
       setLoadingText("連線中...");
     }
   }, [isConnected]);
 
-
-  const [amount, setAmount] = useState("0");
   const handleAmountChange = (input) => {
     setAmount((prevData) => {
       if (input === "BS") {
@@ -83,13 +89,41 @@ function Employee() {
     });
   };
 
+  const handleConfirmAmount = () => {
+    // POST /confirmAmount to notify server amount
+    fetch("/confirmAmount", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        amount: amount
+      })
+    })
+      .then(response => response.text())
+      .then(data => { // log confirmAmount, data
+        console.log("confirmAmount:", data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
   return (
     <div>
       <Overlay show={showOverlay}>
         <Loading loadingText={loadingText} />
       </Overlay>
+      <PhoneNumber phoneNumber={phone} />
       <CheckoutAmount amount={amount} />
       <MoneyPad handleAmountChange={handleAmountChange} />
+      <button
+        type="button"
+        onClick={handleConfirmAmount}
+        className="btn btn-success m-1">
+        確認金額
+      </button>
+
     </div>
   );
 
