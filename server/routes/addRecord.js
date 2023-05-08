@@ -1,5 +1,5 @@
 import express from 'express';
-let router = express.Router();
+const router = express.Router();
 import { SaleRecord } from '../models/saleRecord.js';
 
 import { UserPoint } from '../models/userPoint.js';
