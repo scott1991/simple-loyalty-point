@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 import PhoneNumber from '../../components/PhoneNumber';
 import PhonePad from '../../components/PhonePad';
@@ -46,22 +47,44 @@ function Customer() {
     }
   };
 
+
+
   useEffect(() => {
     const handleAmountChange = (amount) => {
       setAmount(amount);
+    }
+    const handleAddRecord = (record) => {
+      // handle added record ex: {"phone":"0987654321","point":1,"totalPoint":59}
+      // show a toast message 
+      // when toast close, if record.phone == phone, clear the phone and amount
+      // else, log and do nothing
+      console.log("handleAddRecord", record);
+      if (record.phone === phone) {
+        // show toast
+        toast.success('PHONE NUMBER:' + record.phone + 'points added:' + record.point, { duration: 3000 });
+        // clear phone and amount
+        setPhone("");
+        setAmount("0");
+
+      } else {
+        // log and do nothing
+        console.log("phone not match");
+      }
     }
 
     if (socket) {
       socket.on('server.clientsUpdate', checkAndSetOverlay);
       socket.on('employee.confirmAmount', handleAmountChange);
+      socket.on('server.addRecord', handleAddRecord);
 
       return () => {
         // when unmount, remove event listener
         socket.off('server.clientsUpdate', checkAndSetOverlay);
         socket.off('employee.confirmAmount', handleAmountChange);
+        socket.off('server.addRecord', handleAddRecord);
       };
     }
-  }, [socket]);
+  }, [socket, phone]);
 
   useEffect(() => {
     if (isConnected) {
@@ -119,9 +142,12 @@ function Customer() {
         type="button"
         onClick={handleConfirmPhone}
         className="btn btn-success m-1"
-        disabled={amount=== "0"}>
+        disabled={amount === "0"}>
         確認號碼
       </button>
+      <Toaster
+        position="top-center"
+      />
     </div>
 
   );

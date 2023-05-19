@@ -4,6 +4,7 @@ import { SaleRecord } from '../models/saleRecord.js';
 
 import { UserPoint } from '../models/userPoint.js';
 import { createRequire } from "module";
+import socketioService from "../service/socketioService.js";
 const require = createRequire(import.meta.url);
 const config_json = require("../config.json");
 const env = process.env.NODE_ENV || 'development';
@@ -29,6 +30,7 @@ router.post('/', async function (req, res, next) {
       let docUserPoint = await UserPoint.findOne({phone:body.phone});
       console.log("UserPoint found",docUserPoint);
 
+      socketioService.broadcast('server.addRecord', {phone:body.phone, point:doc.point, totalPoint:docUserPoint.point});
       res.json({phone:body.phone, point:doc.point, totalPoint:docUserPoint.point}); // merge record and total
     } catch (error) {
       res.status(500).json(error);

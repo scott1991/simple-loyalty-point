@@ -101,10 +101,18 @@ function sendMsgToRoom(roomName, eventName, message) {
 	IO.to(roomList).emit(eventName, message);
 }
 
+function broadcast(eventName, message) {
+	IO.emit(eventName, message);
+}
+
 function roomClientsCount(roomName) {
 	const roomMap = IO.sockets.adapter.rooms;
 	const roomSet = roomMap.get(roomName);
 	return roomSet.size;
 }
 
-export default { init: init, sendMsgToRoom: sendMsgToRoom };
+export default {
+	init: init,
+	sendMsgToRoom: sendMsgToRoom,
+	broadcast: broadcast
+};
