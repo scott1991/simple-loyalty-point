@@ -54,12 +54,6 @@ function Employee() {
 
     const handleAddRecord = (record) => {
       console.log("handleAddRecord", record);
-      if (record.phone === phone) {
-        // show toast
-        // clear phone and amount
-        // setPhone("");
-        // setAmount("0");
-      }
       toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint,  { duration: 3000 });
     }
 
@@ -115,23 +109,6 @@ function Employee() {
         console.error(error);
       }
       );
-    //   fetch("/confirmAmount", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     },
-    //     body: JSON.stringify({
-    //       amount: amount
-    //     })
-    //   })
-    //     .then(response => response.text())
-    //     .then(data => { // log confirmAmount, data
-    //       console.log("confirmAmount:", data);
-    //     })
-    //     .catch(error => {
-    //       console.error(error);
-    //     });
-    // }
   }
 
   const handleSend = () => {
@@ -160,25 +137,30 @@ function Employee() {
   }
 
   return (
-    <div>
+    <div className='d-flex flex-wrap flex-column align-items-center'>
       <Overlay show={showOverlay}>
         <Loading loadingText={loadingText} />
       </Overlay>
       <PhoneNumber phoneNumber={phone} />
       <CheckoutAmount amount={amount} />
       <MoneyPad handleAmountChange={handleAmountChange} />
+      <div>
       <button
         type="button"
         onClick={handleConfirmAmount}
-        className="btn btn-success m-1">
+        className="btn btn-success m-3 btn-lg"
+        disabled={amount === "0"}>
         確認金額
       </button>
       <button
         type="button"
         onClick={handleSend}
-        className="btn btn-success m-1">
+        className="btn btn-success m-3 btn-lg"
+        disabled={phone == ""}>
         送出
       </button>
+      </div>
+     
       <Toaster
         position="top-center"
       />

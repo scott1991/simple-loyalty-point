@@ -131,7 +131,7 @@ function Customer() {
   };
 
   return (
-    <div>
+    <div className='d-flex flex-wrap flex-column align-items-center'>
       <Overlay show={showOverlay}>
         <Loading loadingText={loadingText} />
       </Overlay>
@@ -141,7 +141,7 @@ function Customer() {
       <button
         type="button"
         onClick={handleConfirmPhone}
-        className="btn btn-success m-1"
+        className="btn btn-success m-3 btn-lg"
         disabled={amount === "0"}>
         確認號碼
       </button>
