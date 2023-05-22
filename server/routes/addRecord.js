@@ -3,12 +3,8 @@ const router = express.Router();
 import { SaleRecord } from '../models/saleRecord.js';
 
 import { UserPoint } from '../models/userPoint.js';
-import { createRequire } from "module";
 import socketioService from "../service/socketioService.js";
-const require = createRequire(import.meta.url);
-const config_json = require("../config.json");
-const env = process.env.NODE_ENV || 'development';
-const CONFIG = config_json[env];
+import CONFIG from "../getConfig.js"
 
 
 /* GET home page. */

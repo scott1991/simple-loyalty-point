@@ -61,7 +61,7 @@ function Customer() {
       console.log("handleAddRecord", record);
       if (record.phone === phone) {
         // show toast
-        toast.success('PHONE NUMBER:' + record.phone + 'points added:' + record.point, { duration: 3000 });
+        toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint,  { duration: 3000 });
         // clear phone and amount
         setPhone("");
         setAmount("0");

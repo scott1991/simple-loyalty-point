@@ -60,7 +60,7 @@ function Employee() {
         // setPhone("");
         // setAmount("0");
       }
-      toast.success('PHONE NUMBER:'+record.phone+'points added:'+record.point, { duration: 3000 });
+      toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint,  { duration: 3000 });
     }
 
     if (socket) {

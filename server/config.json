@@ -1,6 +1,7 @@
 {
   "development": {
-    "pointRate": 100
+    "pointRate": 100,
+    "MongoDBURI":""
   },
   "production": {}
 }
