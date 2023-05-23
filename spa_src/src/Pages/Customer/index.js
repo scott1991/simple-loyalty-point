@@ -61,7 +61,7 @@ function Customer() {
       console.log("handleAddRecord", record);
       if (record.phone === phone) {
         // show toast
-        toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint,  { duration: 3000 });
+        toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint, { duration: 3000 });
         // clear phone and amount
         setPhone("");
         setAmount("0");
@@ -130,6 +130,21 @@ function Customer() {
       });
   };
 
+  const handleGetPoints = () => {
+    // GET /getPoints/{phone} to get user points by phone
+    fetch('/getPoints/' + phone, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(data => {
+        // show toast
+        toast.success(phone + '\nPOINTS:' + data.totalPoint, { duration: 3000 });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className='d-flex flex-wrap flex-column align-items-center'>
       <Overlay show={showOverlay}>
@@ -144,6 +159,13 @@ function Customer() {
         className="btn btn-success m-3 btn-lg"
         disabled={amount === "0"}>
         確認號碼
+      </button>
+      <button
+        type="button"
+        onClick={handleGetPoints}
+        className="btn btn-success m-3"
+        disabled={phone == ""}>
+        查詢點數
       </button>
       <Toaster
         position="top-center"

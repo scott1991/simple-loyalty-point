@@ -5,6 +5,7 @@ import indexRouter from './routes/index.js';
 import addRecord from './routes/addRecord.js';
 import confirmAmount from './routes/confirmAmount.js';
 import confirmPhone from './routes/confirmPhone.js';
+import getPoints from './routes/getPoints.js';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 
@@ -24,5 +25,6 @@ app.use('/', indexRouter);
 app.use('/addRecord', addRecord);
 app.use('/confirmAmount', confirmAmount);
 app.use('/confirmPhone', confirmPhone);
+app.use('/getPoints', getPoints);
 
 export default app;
