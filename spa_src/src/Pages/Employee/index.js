@@ -8,6 +8,10 @@ import Overlay from '../../components/Overlay';
 import Loading from '../../components/Loading';
 import PhoneNumber from '../../components/PhoneNumber';
 import { postJsonData } from '../../serverRequests'
+import PointsModal from '../../components/PointsModal';
+import PhoneModal from '../../components/PhoneModal';
+
+
 
 
 function Employee() {
@@ -16,6 +20,8 @@ function Employee() {
   const [loadingText, setLoadingText] = useState("連線中...");
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("0");
+  const [showPointsModal, setShowPointsModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
 
   const joinRoom = () => {
     return new Promise((resolve, reject) => {
@@ -54,7 +60,7 @@ function Employee() {
 
     const handleAddRecord = (record) => {
       console.log("handleAddRecord", record);
-      toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint,  { duration: 3000 });
+      toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint, { duration: 3000 });
     }
 
     if (socket) {
@@ -136,31 +142,68 @@ function Employee() {
       });
   }
 
+  const handleOpenPointsModal = () => {
+    setShowPointsModal(true);
+  };
+
+  const handleClosePointsModal = () => {
+    setShowPointsModal(false);
+  };
+
+  const handleOpenPhoneModal = () => {
+    setShowPhoneModal(true);
+  };
+
+  const handleClosePhoneModal = () => {
+    setShowPhoneModal(false);
+  };
+
+  const handlePhoneClear = () => {
+    setPhone("");
+  }
+
+  const handleAmountClear = () => {
+    setAmount("0");
+  }
+
   return (
     <div className='d-flex flex-wrap flex-column align-items-center'>
       <Overlay show={showOverlay}>
         <Loading loadingText={loadingText} />
       </Overlay>
-      <PhoneNumber phoneNumber={phone} />
-      <CheckoutAmount amount={amount} />
+      <PhoneNumber phoneNumber={phone} handleClear={handlePhoneClear} />
+      <CheckoutAmount amount={amount} handleClear={handleAmountClear} />
       <MoneyPad handleAmountChange={handleAmountChange} />
       <div>
-      <button
-        type="button"
-        onClick={handleConfirmAmount}
-        className="btn btn-success m-3 btn-lg"
-        disabled={amount === "0"}>
-        確認金額
-      </button>
-      <button
-        type="button"
-        onClick={handleSend}
-        className="btn btn-success m-3 btn-lg"
-        disabled={phone == ""}>
-        送出
-      </button>
+        <button
+          type="button"
+          onClick={handleConfirmAmount}
+          className="btn btn-success m-3 btn-lg"
+          disabled={amount === "0"}>
+          確認金額
+        </button>
+        <button
+          type="button"
+          onClick={handleSend}
+          className="btn btn-success m-3 btn-lg"
+          disabled={phone === "" || amount === "0"}>
+          送出
+        </button>
       </div>
-     
+
+      <button type="button" className="btn btn-success m-3" onClick={handleOpenPointsModal} disabled={phone === ""}>使用點數</button>
+      <button type="button" className="btn btn-success m-3" onClick={handleOpenPhoneModal}>輸入電話</button>
+
+      <PointsModal
+        show={showPointsModal}
+        handleClose={handleClosePointsModal}
+        phone={phone}
+      />
+      <PhoneModal
+        show={showPhoneModal}
+        handleClose={handleClosePhoneModal}
+        setPhone={setPhone}
+      />
       <Toaster
         position="top-center"
       />

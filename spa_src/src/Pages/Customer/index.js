@@ -145,13 +145,21 @@ function Customer() {
       });
   };
 
+  const handlePhoneClear = () => {
+    setPhone("");
+  };
+
+  const handleAmountClear = () => {
+    setAmount("0");
+  };
+
   return (
     <div className='d-flex flex-wrap flex-column align-items-center'>
       <Overlay show={showOverlay}>
         <Loading loadingText={loadingText} />
       </Overlay>
-      <CheckoutAmount amount={amount} />
-      <PhoneNumber phoneNumber={phone} />
+      <CheckoutAmount amount={amount} handleClear={handleAmountClear} />
+      <PhoneNumber phoneNumber={phone} handleClear={handlePhoneClear} />
       <PhonePad handlePhoneChange={handlePhoneChange} />
       <button
         type="button"
@@ -164,7 +172,7 @@ function Customer() {
         type="button"
         onClick={handleGetPoints}
         className="btn btn-success m-3"
-        disabled={phone == ""}>
+        disabled={phone === ""}>
         查詢點數
       </button>
       <Toaster
