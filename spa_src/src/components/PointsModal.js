@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import MoneyPad from './MoneyPad';
 import './screen.css';
+import { getJsonData } from '../serverRequests'
 
 function PointsModal({ show, handleClose, phone }) {
   const modalStyle = {
@@ -15,14 +16,10 @@ function PointsModal({ show, handleClose, phone }) {
   const [points, setPoints] = useState('0');
   const [currentPoints, setCurrentPoints] = useState(0);
 
+  // use getJsonDate to rewite handleGetPoints
   const handleGetPoints = () => {
     // GET /getPoints/{phone} to get user points by phone
-    fetch('/getPoints/' + phone, {
-      method: 'GET'
-    })
-      .then(res => {
-        return res.json()
-      })
+    getJsonData('/getPoints/' + phone)
       .then(data => {
         // show toast
         setCurrentPoints(data.totalPoint);
@@ -30,7 +27,7 @@ function PointsModal({ show, handleClose, phone }) {
       .catch(err => {
         console.log(err);
       });
-  };
+  }
 
   useEffect(() => {
     if (show) {

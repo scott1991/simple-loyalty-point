@@ -13,7 +13,6 @@ import PhoneModal from '../../components/PhoneModal';
 
 
 
-
 function Employee() {
   const [socket, isConnected] = useSocket();
   const [showOverlay, setShowOverlay] = useState(true);
@@ -118,24 +117,11 @@ function Employee() {
   }
 
   const handleSend = () => {
-    // POST /addRecord to add record {phone:string, amount:number}
-    fetch("/addRecord", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        phone: phone,
-        amount: amount
-      }
-      )
-    })
-      .then(response => response.text())
-      .then(data => { // log addRecord, data 
+    postJsonData('/addRecord', { phone: phone, amount: amount })
+      .then(data => {
         console.log("addRecord:", data);
         setAmount("0");
         setPhone("");
-
       })
       .catch(error => {
         console.error(error);
@@ -191,8 +177,8 @@ function Employee() {
         </button>
       </div>
 
-      <button type="button" className="btn btn-success m-3" onClick={handleOpenPointsModal} disabled={phone === ""}>使用點數</button>
-      <button type="button" className="btn btn-success m-3" onClick={handleOpenPhoneModal}>輸入電話</button>
+      <button type="button" className="btn btn-secondary m-3" onClick={handleOpenPointsModal} disabled={phone === ""}>使用點數</button>
+      <button type="button" className="btn btn-secondary m-3" onClick={handleOpenPhoneModal}>輸入電話</button>
 
       <PointsModal
         show={showPointsModal}

@@ -33,7 +33,7 @@ function PointsModal({ show, handleClose, setPhone}) {
       transform: "translate(-50%, -50%)",
     }}>
       <Modal.Header closeButton style={modalStyle}>
-        <Modal.Title></Modal.Title>
+        <Modal.Title>輸入號碼</Modal.Title>
       </Modal.Header>
       <Modal.Body style={modalStyle}>
         <PhonePad handlePhoneChange={handlePhoneChange} />

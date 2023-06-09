@@ -7,6 +7,7 @@ import useSocket from '../../useSocket';
 import Overlay from '../../components/Overlay';
 import Loading from '../../components/Loading';
 import CheckoutAmount from '../../components/CheckoutAmount';
+import { postJsonData, getJsonData } from '../../serverRequests'
 
 
 function Customer() {
@@ -110,32 +111,24 @@ function Customer() {
 
   };
 
+
   const handleConfirmPhone = () => {
     // POST /confirmPhone to notify server amount
-    fetch('/confirmPhone', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        phone: phone
-      },)
+    postJsonData('/confirmPhone', {
+      phone: phone
     })
-      .then(res => res.text())
       .then(data => {
         console.log("confirmPhone", data);
       })
       .catch(err => {
         console.log(err);
       });
-  };
+  }
 
+  
   const handleGetPoints = () => {
     // GET /getPoints/{phone} to get user points by phone
-    fetch('/getPoints/' + phone, {
-      method: 'GET'
-    })
-      .then(res => res.json())
+    getJsonData('/getPoints/' + phone)
       .then(data => {
         // show toast
         toast.success(phone + '\nPOINTS:' + data.totalPoint, { duration: 3000 });
@@ -143,7 +136,7 @@ function Customer() {
       .catch(err => {
         console.log(err);
       });
-  };
+  }
 
   const handlePhoneClear = () => {
     setPhone("");
@@ -166,7 +159,7 @@ function Customer() {
         onClick={handleConfirmPhone}
         className="btn btn-success m-3 btn-lg"
         disabled={amount === "0"}>
-        確認號碼
+        確認金額號碼
       </button>
       <button
         type="button"
