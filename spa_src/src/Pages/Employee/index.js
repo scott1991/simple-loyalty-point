@@ -62,16 +62,23 @@ function Employee() {
       toast.success(record.phone + '\nPOINTS ADDED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint, { duration: 3000 });
     }
 
+    const handleConsumePoints = (record) => {
+      console.log("handleConsumePoints", record);
+      toast.success(record.phone + '\nPOINTS CONSUMED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint, { duration: 3000 });
+    }
+
     if (socket) {
       socket.on('server.clientsUpdate', checkAndSetOverlay);
       socket.on('customer.confirmPhone', handlePhoneChange);
       socket.on('server.addRecord', handleAddRecord);
+      socket.on('server.consumePoints', handleConsumePoints);
 
       return () => {
         // when unmount, remove event listener
         socket.off('server.clientsUpdate', checkAndSetOverlay);
         socket.off('customer.confirmPhone', handlePhoneChange);
         socket.off('server.addRecord', handleAddRecord);
+        socket.off('server.consumePoints', handleConsumePoints);
       };
     }
   }, [socket]);
@@ -117,7 +124,7 @@ function Employee() {
   }
 
   const handleSend = () => {
-    postJsonData('/addRecord', { phone: phone, amount: amount })
+    postJsonData('/Record/add', { phone: phone, amount: amount })
       .then(data => {
         console.log("addRecord:", data);
         setAmount("0");

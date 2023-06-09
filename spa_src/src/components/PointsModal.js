@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import MoneyPad from './MoneyPad';
 import './screen.css';
-import { getJsonData } from '../serverRequests'
+import { getJsonData, postJsonData } from '../serverRequests'
 
 function PointsModal({ show, handleClose, phone }) {
   const modalStyle = {
@@ -13,7 +13,7 @@ function PointsModal({ show, handleClose, phone }) {
   };
   
   
-  const [points, setPoints] = useState('0');
+  const [point, setPoint] = useState('0');
   const [currentPoints, setCurrentPoints] = useState(0);
 
   // use getJsonDate to rewite handleGetPoints
@@ -21,7 +21,6 @@ function PointsModal({ show, handleClose, phone }) {
     // GET /getPoints/{phone} to get user points by phone
     getJsonData('/getPoints/' + phone)
       .then(data => {
-        // show toast
         setCurrentPoints(data.totalPoint);
       })
       .catch(err => {
@@ -31,6 +30,7 @@ function PointsModal({ show, handleClose, phone }) {
 
   useEffect(() => {
     if (show) {
+      setPoint('0')
       handleGetPoints();
     }
   }, [show]);
@@ -40,16 +40,16 @@ function PointsModal({ show, handleClose, phone }) {
     // if input is a empty string setPoints to 0    
     // else setPoints to input    
     if (input[0] === '0') {
-      setPoints(input.slice(1));
+      setPoint(input.slice(1));
     } else if (input === '') {
-      setPoints(0);
+      setPoint(0);
     } else {
-      setPoints(input);
+      setPoint(input);
     }
   };
 
   const handlePadClick = (input) => {
-    setPoints((prevData) => {
+    setPoint((prevData) => {
       if (input === "BS") {
         return prevData.slice(0, -1) || "0";
       } else if (input === "C") {
@@ -66,9 +66,15 @@ function PointsModal({ show, handleClose, phone }) {
 
   const handleConfirm = () => {
     // POST /usePoints to use points
-    // Close the modal after successful submission
-    console.log("to post usePoints");
-    handleClose();
+    postJsonData('/Record/consumePoints',{"phone": phone, "point": point})
+      .then(data => {
+        console.log('consumePoints',data);
+        //setPoint(data.point);
+        handleClose();// Close the modal after successful submission
+      }).catch(err => {
+        console.error(err);
+      })
+    
   };
   return (
     <Modal show={show} onHide={handleClose}>
@@ -79,7 +85,7 @@ function PointsModal({ show, handleClose, phone }) {
         <div className='screen'>
           <label>
             輸入使用點數：
-            <input type="number" className='digit' value={points} onChange={e => handleInputChange(e.target.value)} />
+            <input type="number" className='digit' value={point} onChange={e => handleInputChange(e.target.value)} />
           </label>
         </div>
         <MoneyPad handleAmountChange={handlePadClick} />

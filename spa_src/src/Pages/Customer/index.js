@@ -73,16 +73,33 @@ function Customer() {
       }
     }
 
+    const handleConsumePoints = (record) => {
+      console.log("handleConsumePoints", record);
+      if (record.phone === phone) {
+        // show toast
+        toast.success(record.phone + '\nPOINTS CONSUMED:' + record.point + '\nTOTAL POINTS:' + record.totalPoint, { duration: 3000 });
+        // clear phone and amount
+        setPhone("");
+        setAmount("0");
+
+      } else {
+        // log and do nothing
+        console.log("phone not match");
+      }
+    }
+
     if (socket) {
       socket.on('server.clientsUpdate', checkAndSetOverlay);
       socket.on('employee.confirmAmount', handleAmountChange);
       socket.on('server.addRecord', handleAddRecord);
+      socket.on('server.consumePoints', handleConsumePoints);
 
       return () => {
         // when unmount, remove event listener
         socket.off('server.clientsUpdate', checkAndSetOverlay);
         socket.off('employee.confirmAmount', handleAmountChange);
         socket.off('server.addRecord', handleAddRecord);
+        socket.off('server.consumePoints', handleConsumePoints);
       };
     }
   }, [socket, phone]);
@@ -125,7 +142,7 @@ function Customer() {
       });
   }
 
-  
+
   const handleGetPoints = () => {
     // GET /getPoints/{phone} to get user points by phone
     getJsonData('/getPoints/' + phone)
