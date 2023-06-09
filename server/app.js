@@ -2,7 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import indexRouter from './routes/index.js';
-import addRecord from './routes/addRecord.js';
+import Record from './routes/Record.js';
 import confirmAmount from './routes/confirmAmount.js';
 import confirmPhone from './routes/confirmPhone.js';
 import getPoints from './routes/getPoints.js';
@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(new URL('../spa', import.meta.url).pathname));
 
 app.use('/', indexRouter);
-app.use('/addRecord', addRecord);
+app.use('/Record', Record);
 app.use('/confirmAmount', confirmAmount);
 app.use('/confirmPhone', confirmPhone);
 app.use('/getPoints', getPoints);
