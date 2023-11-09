@@ -1,6 +1,6 @@
 export const postJsonData = async (url, data) => {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(process.env.PUBLIC_URL + url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ export const postJsonData = async (url, data) => {
 
 export const getJsonData = async (url) => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(process.env.PUBLIC_URL + url);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
