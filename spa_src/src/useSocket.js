@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
+
+
 const useSocket = (url) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
+  let socketUrl = url;
+  if (process.env.PUBLIC_URL){
+    const path = process.env.PUBLIC_URL.replace(/\/$/, '') + '/';
+    socketUrl = path + url;
+  }
   useEffect(() => {
-    const newSocket = io(url);
+    const newSocket = io(socketUrl);
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
