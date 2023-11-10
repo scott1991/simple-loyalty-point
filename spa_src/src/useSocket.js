@@ -6,14 +6,11 @@ import { io } from 'socket.io-client';
 const useSocket = (url) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-
-  let socketUrl = url;
-  if (process.env.PUBLIC_URL){
-    const path = process.env.PUBLIC_URL.replace(/\/$/, '') + '/';
-    socketUrl = path + url;
-  }
   useEffect(() => {
-    const newSocket = io(socketUrl);
+    const newSocket = io(window.location.origin, {
+      path: process.env.PUBLIC_URL.replace(/\/$/, '') + '/socket.io'
+    });
+
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
