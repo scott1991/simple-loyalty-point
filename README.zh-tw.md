@@ -1,6 +1,6 @@
 # simple-loyalty-point
 
-[DEMO](https://scott.is-a.dev/)
+[DEMO](https://scott.is-a.dev/point)
 
 這個fullstack專案製做一個簡易的客戶集點系統，提供兩個頁面:客戶端、結帳端。結帳端輸入金額後，客戶端輸入電話號碼確認就可以集點。點數與金額的比例可以透過config設定。專案前端使用 React.js，後端使用nodejs，資料庫使用MongoDB
 該專案使用 [express-es6-spa-example](https://github.com/scott1991/express-es6-spa-example) 來初始化

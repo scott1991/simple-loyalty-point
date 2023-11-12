@@ -1,6 +1,6 @@
 # Simple Loyalty Point
 
-[DEMO](https://scott.is-a.dev/)
+[DEMO](https://scott.is-a.dev/point)
 
 This full-stack project creates a simple customer loyalty point system, offering two interfaces: a customer page and a employee page. After the employee interface enters the amount, the customer can collect points by confirming their phone number on the customer page. The ratio of points to the amount can be adjusted through the config. The project's frontend is built with React.js, the backend with Node.js, and the database is MongoDB. This project was bootstrapped with [express-es6-spa-example](https://github.com/scott1991/express-es6-spa-example).
 
